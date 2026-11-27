@@ -29,8 +29,19 @@ struct ContentView: View {
             var inMemory = false
             #if DEBUG
             inMemory = ProcessInfo.processInfo.arguments.contains("--ui-testing")
+                || ProcessInfo.processInfo.arguments.contains("--design-preview")
             #endif
-            repository = try TripRepository(container: TripRepository.container(inMemory: inMemory))
+            let loaded = try TripRepository(container: TripRepository.container(inMemory: inMemory))
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--design-preview") {
+                for (city, start, end) in [("京都", -20, -17), ("パリ", -10, -7), ("パリ", 2, 5)] {
+                    guard let startDate = TripDates.calendar.date(byAdding: .day, value: start, to: TripDates.today),
+                          let endDate = TripDates.calendar.date(byAdding: .day, value: end, to: TripDates.today) else { continue }
+                    try loaded.addTrip(destination: city, startDate: startDate, endDate: endDate)
+                }
+            }
+            #endif
+            repository = loaded
         } catch {
             loadFailed = true
         }
@@ -45,9 +56,10 @@ struct MainTabsView: View {
         TripTabContainer(selection: $selection) { tab in
             switch tab {
             case .home:
-                TripsPage(repository: repository, isHome: true) { selection = .addTrip }
+                TripsPage(repository: repository, isHome: true, addTrip: { selection = .addTrip },
+                          showAllTrips: { selection = .trips })
             case .trips:
-                TripsPage(repository: repository, isHome: false) { selection = .addTrip }
+                TripsPage(repository: repository, isHome: false, addTrip: { selection = .addTrip })
             case .addTrip:
                 AddTripView(repository: repository)
             case .profile:

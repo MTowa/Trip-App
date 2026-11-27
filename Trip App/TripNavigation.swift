@@ -81,7 +81,7 @@ struct TripSectionButton: View {
             }
             .padding(12)
             .frame(maxWidth: .infinity, minHeight: 76)
-            .background(Color(.secondarySystemGroupedBackground))
+            .background(Color("TripPanel"))
             .clipShape(RoundedRectangle(cornerRadius: 19))
         }
         .buttonStyle(.plain)

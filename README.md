@@ -51,7 +51,7 @@ xcodebuild -project "Trip App.xcodeproj" -scheme "Trip App" -configuration Debug
 
 Swift Testingで都市データと画像・シンボル、旅行とプロフィールの保存・再読み込み・入力検証を確認します。XCUIAutomationでギャラリーと本番画面の旅行作成・タブ移動・プロフィール編集を確認します。初期テンプレートのテストも残っています。
 
-DEBUG起動引数 `--ui-testing` は保存先をメモリ内に分離します（起動ごとに空、通常の保存データは変更しません）。`--large-text` は最大文字サイズ、`--dark-mode` はダーク表示の確認用です。通常利用時はこれらの引数を外してください。
+DEBUG起動引数 `--ui-testing` は保存先をメモリ内に分離します（起動ごとに空、通常の保存データは変更しません）。`--large-text` は最大文字サイズ、`--dark-mode` はダーク表示の確認用です。`--design-preview` は写真付きサンプル旅行3件をメモリ内に作るデザイン確認用です。通常データを読み書きせず、Releaseでは有効になりません。通常利用時はこれらの引数を外してください。
 
 - [工程3の画面・保存設計・検証記録](docs/stage-3-pages.md)
 

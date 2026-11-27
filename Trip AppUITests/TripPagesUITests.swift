@@ -24,6 +24,12 @@ final class TripPagesUITests: XCTestCase {
         XCTAssertTrue(destination.waitForExistence(timeout: 5))
         destination.tap()
         destination.typeText("Kyoto\n")
+        let dates = app.buttons["trip-dates"]
+        reveal(dates, in: app)
+        dates.tap()
+        XCTAssertTrue(app.navigationBars["旅行日程"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.datePickers.count, 2)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
         reveal(app.buttons["create-trip"], in: app)
         capture(app, name: "旅行作成")
         app.buttons["create-trip"].tap()
@@ -34,7 +40,7 @@ final class TripPagesUITests: XCTestCase {
         XCTAssertTrue(card.waitForExistence(timeout: 5))
         XCTAssertTrue(card.label.contains("Kyoto"))
         capture(app, name: "ホーム")
-        app.tabBars.buttons["旅行一覧"].tap()
+        app.buttons["すべて見る"].tap()
         card.tap()
         XCTAssertTrue(app.navigationBars["旅行の概要"].waitForExistence(timeout: 5))
         app.navigationBars.buttons.element(boundBy: 0).tap()
@@ -58,7 +64,8 @@ final class TripPagesUITests: XCTestCase {
         app.buttons["友だち追加"].tap()
         XCTAssertTrue(app.staticTexts["友だちと旅を共有"].waitForExistence(timeout: 5))
         app.tabBars.buttons["設定"].tap()
-        XCTAssertTrue(app.staticTexts["この端末に保存"].waitForExistence(timeout: 5))
+        capture(app, name: "設定上部")
+        reveal(app.staticTexts["この端末に保存"], in: app)
         capture(app, name: "設定")
     }
 
