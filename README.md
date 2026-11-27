@@ -14,7 +14,7 @@
 | リポジトリ | https://github.com/MTowa/Trip-App |
 | スキーム | Trip App（共有） |
 
-現在は工程1の初期プロジェクトです。旅行機能、永続化、認証、共有はまだ実装していません。認証・共有バックエンドは工程5の着手前に決定します。
+現在は工程2の共通コンポーネントまで実装しています。旅行画面、永続化、認証、共有はまだ実装していません。認証・共有バックエンドは工程5の着手前に決定します。
 
 このプロジェクトはXcodeのJSON形式（project.xcproj）を使用しています。開発環境の差を避けるため、Xcode 27.2を使用してください。最低対応iOSと開発用Xcodeのバージョンは別です。
 
@@ -27,7 +27,7 @@
    cd Trip-App
    ```
 
-2. PRを検証する場合は対象ブランチに切り替えます。工程1のレビュー中は `git switch stage-1-project-setup` を実行してください。mainは承認まで初期コミットのみです。
+2. PRを検証する場合は対象ブランチに切り替えます。工程2のレビュー中は `git switch stage-2-feat-trip-components` を実行してください。
 3. `Trip App.xcodeproj` をXcode 27.2で開きます。
 4. スキーム「Trip App」とインストール済みのiPhoneシミュレーターを選択します。
 5. ⌘Rで起動します。初期画面はXcodeテンプレートの「Hello, world!」です。
@@ -49,13 +49,21 @@ xcodebuild -project "Trip App.xcodeproj" -scheme "Trip App" -configuration Debug
 
 端末名は、表示された利用可能なiPhoneシミュレーター名に置き換えてください。iOS 17対応の設定だけでは、iOS 17での実行検証を代替できません。対応するランタイムまたは実機での検証は別途必要です。
 
-現時点のテストはXcodeの初期テンプレートです。成功しても旅行機能の動作を保証するものではありません。各機能の実装時にSwift Testingによる単体テスト、XCUIAutomationによる主要操作のテストを追加します。
+工程2では都市データの検証・画像とシンボルの存在確認をSwift Testingで、ギャラリーの操作をXCUIAutomationで追加しています。初期テンプレートのテストも残っています。旅行機能の動作を保証するものではなく、各機能の実装時に必要な検証を追加します。
 
 ## 名前と設定
 
 ホーム画面に表示する名前は、アプリターゲットの `INFOPLIST_KEY_CFBundleDisplayName` にまとめています。現状は「Trip App」です。今後アプリ内で名前を表示する際もBundleの表示名を参照します。
 
 GitHubリポジトリ名、Xcodeターゲット名、Bundle Identifierはそれぞれ独立して管理します。表示名変更だけでBundle Identifierを変更しないでください。
+
+## 共通コンポーネントの確認（工程2）
+
+`ComponentGallery.swift` のPreviewから、標準表示・文字サイズ最大・ダークモードを確認できます。シミュレーターで操作する場合は、Product > Scheme > Edit Scheme > Run > Argumentsに `--component-gallery` を追加してDebugで実行します。確認後は引数を外してください。ギャラリーはDEBUG専用で、デモデータを保存・共有しません。
+
+- [都市画像の仕様と記入例](docs/destination-images.md)
+- [コンポーネント一覧・デザインとの対応](docs/components.md)
+- [ブランチ・PR命名規則](docs/development-workflow.md)
 
 ## 開発の進め方
 

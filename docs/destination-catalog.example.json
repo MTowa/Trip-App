@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "destinations": [
+    {
+      "id": "jp-kyoto",
+      "displayName": "京都",
+      "countryCode": "JP",
+      "timeZoneIdentifier": "Asia/Tokyo",
+      "cover": {
+        "assetName": "CoverKyoto",
+        "fileName": "jp-kyoto.jpg",
+        "attribution": {
+          "creator": "撮影者名（記入例）",
+          "sourceURL": "https://example.com/photos/kyoto",
+          "license": "利用許諾条件を記入",
+          "credit": "写真: 撮影者名（記入例）"
+        }
+      }
+    }
+  ]
+}
