@@ -106,6 +106,7 @@ struct TripEmptyStateView: View {
         } actions: {
             Button(actionTitle, action: action)
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(Color(.systemBackground))
                 .controlSize(.large)
                 .accessibilityIdentifier("empty-state-action")
         }
