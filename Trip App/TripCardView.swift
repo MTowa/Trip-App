@@ -7,12 +7,29 @@ struct TripCardView: View {
     let dateText: String
     let coverAssetName: String?
     var companionNames: [String] = []
+    var startDateText: String? = nil
+    var endDateText: String? = nil
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(spacing: 8) {
-            Text(dateText)
-                .font(.subheadline.weight(.semibold))
-                .multilineTextAlignment(.center)
+            if let startDateText, let endDateText {
+                if dynamicTypeSize.isAccessibilitySize {
+                    Text(dateText).font(.subheadline.weight(.semibold))
+                        .multilineTextAlignment(.center)
+                } else {
+                    HStack(spacing: 16) {
+                        Text(startDateText)
+                        Rectangle().fill(.white.opacity(0.65)).frame(height: 1)
+                        Text(endDateText)
+                    }
+                    .font(.caption.weight(.semibold))
+                }
+            } else {
+                Text(dateText)
+                    .font(.subheadline.weight(.semibold))
+                    .multilineTextAlignment(.center)
+            }
             Text(destinationName)
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
@@ -94,9 +111,10 @@ struct DestinationCover: View {
 }
 
 struct ProfileAvatarView: View {
+    var size: CGFloat = 64
     var body: some View {
         Image(systemName: "person.crop.circle.fill")
-            .font(.system(size: 64))
+            .font(.system(size: size))
             .foregroundStyle(.secondary)
             .accessibilityLabel("プロフィール画像未設定")
     }
