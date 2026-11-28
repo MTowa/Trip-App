@@ -83,6 +83,7 @@ final class TripRepository {
     private let profile: LocalProfile
     private(set) var trips: [TripSummary]
     private(set) var displayName: String
+    let details: TripDetailStore
 
     init(container: ModelContainer) throws {
         let context = ModelContext(container)
@@ -98,13 +99,14 @@ final class TripRepository {
         }
         displayName = profile.displayName
         trips = try Self.fetchTrips(context)
+        details = try TripDetailStore(container: container, userID: profile.id)
     }
 
     static func container(inMemory: Bool = false) throws -> ModelContainer {
         let configuration = ModelConfiguration(
             isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none
         )
-        return try ModelContainer(for: SavedTrip.self, LocalProfile.self, configurations: configuration)
+        return try ModelContainer(for: SavedTrip.self, LocalProfile.self, SavedTripDetail.self, configurations: configuration)
     }
 
     @discardableResult
@@ -126,6 +128,23 @@ final class TripRepository {
         trips.append(summary)
         trips.sort { $0.startDate < $1.startDate }
         return summary
+    }
+
+    func updateTrip(id: UUID, destination: String, startDate: Date, endDate: Date) throws {
+        guard details.isOwner(of: id) else { throw TripDetailError.denied }
+        let name = destination.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, name.count <= 100 else { throw TripInputError.emptyDestination }
+        let start = TripDates.calendar.startOfDay(for: startDate)
+        let end = TripDates.calendar.startOfDay(for: endDate)
+        guard end >= start else { throw TripInputError.invalidDates }
+        guard let trip = try context.fetch(FetchDescriptor<SavedTrip>()).first(where: { $0.id == id }) else {
+            throw TripDetailError.missing
+        }
+        trip.destination = name
+        trip.startDate = start
+        trip.endDate = end
+        do { try context.save() } catch { context.rollback(); throw error }
+        trips = try Self.fetchTrips(context)
     }
 
     func updateProfile(name: String) throws {

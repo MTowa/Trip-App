@@ -72,17 +72,7 @@ struct TripSectionButton: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: section.symbol)
-                    .font(.title2)
-                Text(section.title)
-                    .font(.subheadline.bold())
-                    .multilineTextAlignment(.center)
-            }
-            .padding(12)
-            .frame(maxWidth: .infinity, minHeight: 76)
-            .background(Color("TripPanel"))
-            .clipShape(RoundedRectangle(cornerRadius: 19))
+            TripSectionTile(section: section)
         }
         .buttonStyle(.plain)
         .foregroundStyle(Color.accentColor)
@@ -90,6 +80,28 @@ struct TripSectionButton: View {
         .accessibilityHint("旅行の情報を開きます")
     }
 }
+
+struct TripSectionTile: View {
+    let section: TripSection
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: section.symbol)
+                .font(.title2)
+            Text(section.title)
+                .font(.subheadline.bold())
+                .multilineTextAlignment(.center)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, minHeight: 76)
+        .background(Color("TripPanel"))
+        .clipShape(RoundedRectangle(cornerRadius: 19))
+        .foregroundStyle(Color.accentColor)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(section.title)
+    }
+}
+
 
 struct TripEmptyStateView: View {
     let title: LocalizedStringKey
