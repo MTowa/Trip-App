@@ -123,7 +123,6 @@ struct TripSummaryCard: View {
 struct TripToolsView: View {
     let trip: TripSummary
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @State private var selectedSection: TripSection?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -131,38 +130,31 @@ struct TripToolsView: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8),
                                      count: dynamicTypeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
                 ForEach(TripSection.allCases) { section in
-                    TripSectionButton(section: section) { selectedSection = section }
-                }
-            }
-        }
-        .sheet(item: $selectedSection) { section in
-            NavigationStack {
-                ContentUnavailableView {
-                    Label(section.title, systemImage: section.symbol)
-                } description: {
-                    Text("\(trip.destination)の情報を追加・編集する機能は準備中です。")
-                }
-                .navigationTitle(section.title)
-                .navigationBarTitleDisplayMode(.inline)
-                .modifier(TripPageStyle())
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("閉じる") { selectedSection = nil }
+                    NavigationLink {
+                        TripDetailPage(trip: trip, section: section)
+                    } label: {
+                        TripSectionTile(section: section)
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(section.title)
                 }
             }
         }
+
     }
 }
 
 struct TripOverviewView: View {
     let trip: TripSummary
+    @Environment(TripRepository.self) private var repository
+    @State private var editing = false
 
     var body: some View {
+        let current = repository.trips.first { $0.id == trip.id } ?? trip
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                TripSummaryCard(trip: trip)
-                TripToolsView(trip: trip)
+                TripSummaryCard(trip: current)
+                TripToolsView(trip: current)
                 Label("この端末に保存済み", systemImage: "checkmark.circle")
                     .font(.subheadline)
             }
@@ -173,5 +165,15 @@ struct TripOverviewView: View {
         .navigationBarTitleDisplayMode(.inline)
         .modifier(TripPageStyle())
         .accessibilityIdentifier("trip-overview")
+        .toolbar {
+            if repository.details.isOwner(of: trip.id) {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("旅行を編集") { editing = true }
+                }
+            }
+        }
+        .sheet(isPresented: $editing) {
+            TripHeaderEditor(repository: repository, trip: current)
+        }
     }
 }

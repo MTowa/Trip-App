@@ -20,13 +20,13 @@ struct TripRepositoryTests {
         let configuration = ModelConfiguration(url: folder.appendingPathComponent("trips.store"), cloudKitDatabase: .none)
         let id: UUID
         do {
-            let container = try ModelContainer(for: SavedTrip.self, LocalProfile.self, configurations: configuration)
+            let container = try ModelContainer(for: SavedTrip.self, LocalProfile.self, SavedTripDetail.self, configurations: configuration)
             let repository = try TripRepository(container: container)
             #expect(repository.trips.isEmpty)
             id = try repository.addTrip(destination: " 京都 ", startDate: TripDates.today, endDate: TripDates.today).id
             try repository.updateProfile(name: " たびびと ")
         }
-        let reopened = try ModelContainer(for: SavedTrip.self, LocalProfile.self, configurations: configuration)
+        let reopened = try ModelContainer(for: SavedTrip.self, LocalProfile.self, SavedTripDetail.self, configurations: configuration)
         let repository = try TripRepository(container: reopened)
         #expect(repository.trips.count == 1)
         #expect(repository.trips.first?.id == id)
